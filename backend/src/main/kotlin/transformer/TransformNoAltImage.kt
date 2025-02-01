@@ -1,5 +1,6 @@
 package com.example.transformer
 
+import com.example.ai.AIApi
 import com.example.ai.getImageAltText
 import kotlinx.coroutines.runBlocking
 import org.jsoup.nodes.Document
@@ -11,6 +12,7 @@ const val NO_ALT_IMAGE_TYPE = "no-alt-image"
 
 class TransformNoAltImage(
     private val logger: Logger,
+    private val ai: AIApi,
 ) : Transformer {
     override suspend fun transformAll(document: Document): List<Transformation> {
         val images: List<Element> =
@@ -30,7 +32,7 @@ class TransformNoAltImage(
 
         logger.log(Level.INFO, "Image link: $imageLink")
 
-        val imageAltText: String = getImageAltText(imageLink)
+        val imageAltText: String = ai.getImageAltText(imageLink)
 
         val newElement: Element = element.clone()
 
