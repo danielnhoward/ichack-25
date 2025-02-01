@@ -114,9 +114,9 @@ object AnthropicAPI {
     }
 
 
-    suspend fun makeRequest(request: MessageBatch): MessageBatchInfoResponse {
+    suspend fun makeRequest(request: AnthropicRequest): AnthropicResponse {
         try {
-            val response: HttpResponse = client.post("https://api.anthropic.com/v1/messages/batches") {
+            val response: HttpResponse = client.post("https://api.anthropic.com/v1/messages") {
                 header("x-api-key", apiKey)
                 header("anthropic-version", "2023-06-01")
                 contentType(ContentType.Application.Json)
@@ -124,38 +124,7 @@ object AnthropicAPI {
             }
             println(request)
             println(response.bodyAsText())
-            return (json.decodeFromString<MessageBatchInfoResponse>(response.bodyAsText()))
-        } catch (e: Exception) {
-            e.printStackTrace()
-            throw e
-        }
-    }
-
-    suspend fun getBatchInfo(id: String): MessageBatchInfoResponse {
-        try {
-            val response: HttpResponse = client.get("https://api.anthropic.com/v1/messages/batches/$id") {
-                header("x-api-key", apiKey)
-                header("anthropic-version", "2023-06-01")
-                contentType(ContentType.Application.Json)
-            }
-            println(response.bodyAsText())
-            return (json.decodeFromString<MessageBatchInfoResponse>(response.bodyAsText()))
-        } catch (e: Exception) {
-            e.printStackTrace()
-            throw e
-        }
-    }
-
-    suspend fun getBatchResult(url: String): List<SingleMessageResult> {
-        try {
-            val response: HttpResponse = client.get(url) {
-                header("x-api-key", apiKey)
-                header("anthropic-version", "2023-06-01")
-                contentType(ContentType.Application.Json)
-            }
-            return response.bodyAsText().lines().map {
-                json.decodeFromString(it)
-            }
+            return (json.decodeFromString<AnthropicResponse>(response.bodyAsText()))
         } catch (e: Exception) {
             e.printStackTrace()
             throw e

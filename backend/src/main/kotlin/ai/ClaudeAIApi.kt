@@ -1,8 +1,7 @@
 package com.example.ai
 
-import com.example.ai.AnthropicAPI.getBatchInfo
-import com.example.ai.AnthropicAPI.getBatchResult
 import com.example.ai.AnthropicAPI.makeRequest
+import com.example.transformer.asyncMap
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import java.util.UUID
@@ -39,20 +38,23 @@ class ClaudeAIApi : AIApi {
     private val queuer = Queuer<AnthropicRequest, AnthropicResponse> { stuff ->
         return@Queuer runBlocking {
             println("Requesting")
-            val messageBatchIds = stuff.associateBy { UUID.randomUUID().toString() }
-            val batchRequest = MessageBatch(messageBatchIds.entries.map { (id, req) ->
-                MessageBatchRequest(id, req)
-            })
-            var response = makeRequest(batchRequest)
-            while (response.processingStatus != "ended") {
-                response = getBatchInfo(response.id)
-                println("Retrying")
-                delay(30000)
-            }
-
-            var results = getBatchResult(response.resultsUrl!!)
-
-            results.associate { messageBatchIds[it.customId]!! to it.result.message }
+//            val messageBatchIds = stuff.associateBy { UUID.randomUUID().toString() }
+//            val batchRequest = MessageBatch(messageBatchIds.entries.map { (id, req) ->
+//                MessageBatchRequest(id, req)
+//            })
+//            var response = makeRequest(batchRequest)
+//            while (response.processingStatus != "ended") {
+//                response = getBatchInfo(response.id)
+//                println("Retrying")
+//                delay(30000)
+//            }
+//
+//            var results = getBatchResult(response.resultsUrl!!)
+//
+//            results.associate { messageBatchIds[it.customId]!! to it.result.message }
+            return@runBlocking stuff.map {
+                it to makeRequest(it)
+            }.associate { it }
         }
     }
 
