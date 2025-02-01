@@ -6,6 +6,7 @@ import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.client.statement.readRawBytes
 import io.ktor.http.*
+import kotlinx.coroutines.delay
 import kotlinx.serialization.*
 import kotlinx.serialization.json.*
 import kotlinx.serialization.modules.SerializersModule
@@ -104,6 +105,7 @@ object AnthropicAPI {
         var response = makeRequest(batchRequest)
         while (response.processingStatus != "ended") {
             response = getBatchInfo(response.id)
+            delay(500)
         }
 
         var results = getBatchResult(response.resultsUrl)
