@@ -67,6 +67,10 @@ object AnthropicAPI {
     private val apiKey = System.getenv("ANTHROPIC_TOKEN")
     private val client = HttpClient(CIO)
 
+    private val queuer = AsyncQueuer<AnthropicRequest, AnthropicResponse> { stuff ->
+        stuff.associateWith { actualRequest(it) }
+    }
+
     private val module = SerializersModule {
         polymorphic(AnthropicContent::class) {
             subclass(TextContent::class)
@@ -82,6 +86,10 @@ object AnthropicAPI {
     }
 
     suspend fun request(request: AnthropicRequest): AnthropicResponse {
+        return queuer.addRequest(request)
+    }
+
+    suspend fun actualRequest(request: AnthropicRequest): AnthropicResponse {
         try {
             val response: HttpResponse = client.post("https://api.anthropic.com/v1/messages") {
                 header("x-api-key", apiKey)
@@ -89,9 +97,10 @@ object AnthropicAPI {
                 contentType(ContentType.Application.Json)
                 setBody(json.encodeToString(request))
             }
-
+            println(response.bodyAsText())
             return (json.decodeFromString<AnthropicResponse>(response.bodyAsText()))
         } catch (e: Exception) {
+            e.printStackTrace()
             throw e
         }
     }

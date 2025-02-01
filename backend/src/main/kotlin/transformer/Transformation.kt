@@ -20,6 +20,6 @@ class Transform(
     fun transform(input: String): List<Transformation> {
         val document: Document = Jsoup.parse(input)
 
-        return transformNoAltImage.transformAll(document)
+        return TODO() //transformNoAltImage.transformAll(document)
     }
 }

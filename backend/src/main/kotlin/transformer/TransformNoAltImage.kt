@@ -12,17 +12,17 @@ const val NO_ALT_IMAGE_TYPE = "no-alt-image"
 class TransformNoAltImage(
     private val logger: Logger,
 ) : Transformer {
-    override fun transformAll(document: Document): List<Transformation> {
+    override suspend fun transformAll(document: Document): List<Transformation> {
         val images: List<Element> =
             document
                 .select("img")
 
         return images
             .filter { !it.hasAttr("alt") }
-            .map { transform(it) }
+            .asyncMap { transform(it) }
     }
 
-    override fun transform(element: Element): Transformation {
+    override suspend fun transform(element: Element): Transformation {
         require(element.tagName() == "img") { "Must enter a img tag" }
         require(!element.hasAttr("alt")) { "Must not have an alt" }
 
@@ -30,7 +30,7 @@ class TransformNoAltImage(
 
         logger.log(Level.INFO, "Image link: $imageLink")
 
-        val imageAltText: String = runBlocking { getImageAltText(imageLink) }
+        val imageAltText: String = getImageAltText(imageLink)
 
         val newElement: Element = element.clone()
 
