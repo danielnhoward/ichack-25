@@ -1,5 +1,7 @@
 package com.example.transformer
 
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 import kotlinx.serialization.Serializable
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -17,9 +19,9 @@ class Transform(
 ) {
     private val transformNoAltImage: Transformer = TransformNoAltImage(logger)
 
-    fun transform(input: String): List<Transformation> {
+    suspend fun transform(input: String): List<Transformation> {
         val document: Document = Jsoup.parse(input)
 
-        return TODO() //transformNoAltImage.transformAll(document)
+        return transformNoAltImage.transformAll(document)
     }
 }

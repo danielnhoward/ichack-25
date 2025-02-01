@@ -7,12 +7,12 @@ import io.ktor.client.statement.*
 import io.ktor.client.statement.readRawBytes
 import io.ktor.http.*
 import kotlinx.serialization.*
-import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.*
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.contextual
 import kotlinx.serialization.modules.polymorphic
 import kotlinx.serialization.modules.subclass
+import java.util.UUID
 import kotlin.io.encoding.Base64
 import kotlin.io.encoding.ExperimentalEncodingApi
 
@@ -26,7 +26,7 @@ data class Message(
 data class AnthropicRequest(
     val messages: List<Message>,
     val model: String = "claude-3-haiku-20240307",
-    val max_tokens: Int = 1024
+    @SerialName("max_tokens") val maxTokens: Int = 1024
 )
 
 @Serializable
@@ -63,12 +63,43 @@ data class AnthropicSource(
     val data: String
 )
 
+@Serializable
+data class MessageBatchRequest(
+    @SerialName("custom_id") val customId: String,
+    val params: AnthropicRequest
+)
+
+@Serializable
+data class MessageBatch(
+    val requests: List<MessageBatchRequest>
+)
+
+@Serializable
+data class MessageBatchInfoResponse(
+    val id: String,
+    @SerialName("results_url") val resultsUrl: String,
+    @SerialName("processing_status") val processingStatus: String
+)
+
+@Seriali
+
 object AnthropicAPI {
     private val apiKey = System.getenv("ANTHROPIC_TOKEN")
     private val client = HttpClient(CIO)
 
     private val queuer = AsyncQueuer<AnthropicRequest, AnthropicResponse> { stuff ->
-        stuff.associateWith { actualRequest(it) }
+        val messageBatchIds = stuff.associateBy { UUID.randomUUID().toString() }
+        val batchRequest = MessageBatch(messageBatchIds.entries.map { (id, req) ->
+            MessageBatchRequest(id, req)
+        })
+        var response = makeRequest(batchRequest)
+        while (response.processingStatus != "ended") {
+            response = getBatchInfo(response.id)
+        }
+
+        var
+
+        return@AsyncQueuer TODO()
     }
 
     private val module = SerializersModule {
@@ -79,6 +110,7 @@ object AnthropicAPI {
         contextual(AnthropicRequest.serializer())
         contextual(AnthropicResponse.serializer())
     }
+
     private val json = Json {
         ignoreUnknownKeys = true
         serializersModule = module
@@ -89,7 +121,7 @@ object AnthropicAPI {
         return queuer.addRequest(request)
     }
 
-    suspend fun actualRequest(request: AnthropicRequest): AnthropicResponse {
+    suspend fun makeRequest(request: MessageBatch): MessageBatchInfoResponse {
         try {
             val response: HttpResponse = client.post("https://api.anthropic.com/v1/messages") {
                 header("x-api-key", apiKey)
@@ -98,7 +130,38 @@ object AnthropicAPI {
                 setBody(json.encodeToString(request))
             }
             println(response.bodyAsText())
-            return (json.decodeFromString<AnthropicResponse>(response.bodyAsText()))
+            return (json.decodeFromString<MessageBatchInfoResponse>(response.bodyAsText()))
+        } catch (e: Exception) {
+            e.printStackTrace()
+            throw e
+        }
+    }
+
+    suspend fun getBatchInfo(id: String): MessageBatchInfoResponse {
+        try {
+            val response: HttpResponse = client.post("https://api.anthropic.com/v1/messages/batches/$id") {
+                header("x-api-key", apiKey)
+                header("anthropic-version", "2023-06-01")
+                contentType(ContentType.Application.Json)
+            }
+            println(response.bodyAsText())
+            return (json.decodeFromString<MessageBatchInfoResponse>(response.bodyAsText()))
+        } catch (e: Exception) {
+            e.printStackTrace()
+            throw e
+        }
+    }
+
+
+    suspend fun getBatchResult(url: String): MessageBatchInfoResponse {
+        try {
+            val response: HttpResponse = client.get(url) {
+                header("x-api-key", apiKey)
+                header("anthropic-version", "2023-06-01")
+                contentType(ContentType.Application.Json)
+            }
+            println(response.bodyAsText())
+            return (json.decodeFromString<MessageBatchInfoResponse>(response.bodyAsText()))
         } catch (e: Exception) {
             e.printStackTrace()
             throw e
