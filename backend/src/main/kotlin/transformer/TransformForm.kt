@@ -9,12 +9,13 @@ import java.util.logging.Logger
 
 const val CHANGE_WHOLE_FORM = "change-whole-form"
 
-class TransformForm(private val logger: Logger) : Transformer {
+class TransformForm(
+    private val logger: Logger,
+) : Transformer {
     override fun transformAll(document: Document): List<Transformation> =
         document
             .select("form")
             .map { transform(it) }
-
 
     override fun transform(element: Element): Transformation {
         val newAccessibleForm: String = getAccessibleForm(element.toString())
@@ -27,37 +28,40 @@ class TransformForm(private val logger: Logger) : Transformer {
 
 const val NO_INPUT_LABEL = "no-input-label"
 
-class TransformNoInputLabel(private val logger: Logger) : Transformer {
+class TransformNoInputLabel(
+    private val logger: Logger,
+) : Transformer {
     override fun transformAll(document: Document): List<Transformation> =
         document
             .select("form")
             .flatMap { form ->
-                form
-                    .select("input")
-                    .filter {
-                        val id = it.id()
-                        form.select("label[for=$id]").isEmpty()
-                    }
-            }
-            .map { transform(it) }
+                val inputs: List<Element> =
+                    form
+                        .select("input")
 
+                inputs.filter {
+                    val id = it.id()
+                    form.select("label[for=$id]").isEmpty()
+                }
+            }.map { transform(it) }
 
     // Precondition: passed in input element does not have a label in the form
     // Response transformation returns the label plus the input
     override fun transform(element: Element): Transformation {
-        require(element.tagName() == "input") {"element is not a input element"}
+        require(element.tagName() == "input") { "element is not a input element" }
 
         val inputId: String = element.attr("id")
         val inputType: String = element.attr("type")
         val inputName: String = element.attr("name")
         val inputValue: String = element.attr("value")
 
-        val inputLabel: String = getLabelForInput(
-            id = inputId,
-            type = inputType,
-            name = inputName,
-            value = inputValue,
-        )
+        val inputLabel: String =
+            getLabelForInput(
+                id = inputId,
+                type = inputType,
+                name = inputName,
+                value = inputValue,
+            )
 
         logger.log(Level.INFO, "InputLabel: $inputLabel")
 

@@ -5,6 +5,7 @@ plugins {
     kotlin("jvm") version "2.1.10"
     id("io.ktor.plugin") version "3.0.3"
     id("org.jetbrains.kotlin.plugin.serialization") version "2.1.10"
+    id("org.jmailen.kotlinter") version "5.0.1"
 }
 
 group = "com.example"
