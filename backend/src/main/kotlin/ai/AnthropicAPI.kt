@@ -78,7 +78,7 @@ data class MessageBatch(
 @Serializable
 data class MessageBatchInfoResponse(
     val id: String,
-    @SerialName("results_url") val resultsUrl: String,
+    @SerialName("results_url") val resultsUrl: String?,
     @SerialName("processing_status") val processingStatus: String
 )
 
@@ -97,21 +97,6 @@ object AnthropicAPI {
     private val apiKey = System.getenv("ANTHROPIC_TOKEN")
     private val client = HttpClient(CIO)
 
-    private val queuer = AsyncQueuer<AnthropicRequest, AnthropicResponse> { stuff ->
-        val messageBatchIds = stuff.associateBy { UUID.randomUUID().toString() }
-        val batchRequest = MessageBatch(messageBatchIds.entries.map { (id, req) ->
-            MessageBatchRequest(id, req)
-        })
-        var response = makeRequest(batchRequest)
-        while (response.processingStatus != "ended") {
-            response = getBatchInfo(response.id)
-            delay(500)
-        }
-
-        var results = getBatchResult(response.resultsUrl)
-
-        return@AsyncQueuer results.associate { messageBatchIds[it.customId]!! to it.result.message }
-    }
 
     private val module = SerializersModule {
         polymorphic(AnthropicContent::class) {
@@ -128,18 +113,16 @@ object AnthropicAPI {
         encodeDefaults = true
     }
 
-    suspend fun request(request: AnthropicRequest): AnthropicResponse {
-        return queuer.addRequest(request)
-    }
 
     suspend fun makeRequest(request: MessageBatch): MessageBatchInfoResponse {
         try {
-            val response: HttpResponse = client.post("https://api.anthropic.com/v1/messages") {
+            val response: HttpResponse = client.post("https://api.anthropic.com/v1/messages/batches") {
                 header("x-api-key", apiKey)
                 header("anthropic-version", "2023-06-01")
                 contentType(ContentType.Application.Json)
                 setBody(json.encodeToString(request))
             }
+            println(request)
             println(response.bodyAsText())
             return (json.decodeFromString<MessageBatchInfoResponse>(response.bodyAsText()))
         } catch (e: Exception) {
@@ -150,7 +133,7 @@ object AnthropicAPI {
 
     suspend fun getBatchInfo(id: String): MessageBatchInfoResponse {
         try {
-            val response: HttpResponse = client.post("https://api.anthropic.com/v1/messages/batches/$id") {
+            val response: HttpResponse = client.get("https://api.anthropic.com/v1/messages/batches/$id") {
                 header("x-api-key", apiKey)
                 header("anthropic-version", "2023-06-01")
                 contentType(ContentType.Application.Json)

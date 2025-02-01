@@ -4,6 +4,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import com.example.ai.AIApi
 import com.example.ai.ClaudeAIApi
+import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.Serializable
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -20,11 +21,15 @@ class Transform(
     private val logger: Logger,
 ) {
     fun transform(input: String): List<Transformation> {
-        val document: Document = Jsoup.parse(input)
 
-        val ai: AIApi = ClaudeAIApi()
-        val transformNoAltImage: Transformer = TransformNoAltImage(logger, ai)
 
-        return TODO() //transformNoAltImage.transformAll(document)
+        return runBlocking {
+            val document: Document = Jsoup.parse(input)
+            println("before")
+            val ai: AIApi = ClaudeAIApi().init()
+            println("After")
+            val transformNoAltImage: Transformer = TransformNoAltImage(logger, ai)
+            transformNoAltImage.transformAll(document)
+        }
     }
 }

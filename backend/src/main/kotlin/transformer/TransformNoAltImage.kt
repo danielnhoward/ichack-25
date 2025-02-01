@@ -1,7 +1,6 @@
 package com.example.transformer
 
 import com.example.ai.AIApi
-import com.example.ai.getImageAltText
 import kotlinx.coroutines.runBlocking
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element

@@ -1,5 +1,11 @@
 package com.example.ai
 
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import java.util.Collections.synchronizedList
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.CountDownLatch
@@ -14,11 +20,22 @@ class Queuer<T, R>(private val op: (List<T>) -> Map<T, R>) {
     private val startedProcessing = AtomicBoolean(false)
 
     init {
-        // very hacky solution
         latch = CountDownLatch(1)
-        Thread.sleep(WAIT_TIME)
-        startedProcessing.set(true)
-        serviceAll()
+        // very hacky solution#
+
+    }
+
+    @OptIn(DelicateCoroutinesApi::class)
+    suspend fun initialise() {
+        println("before")
+        GlobalScope.launch {
+                println("start waiting")
+                delay(WAIT_TIME)
+                println("done waiting")
+                startedProcessing.set(true)
+                serviceAll()
+        }
+        println("after")
     }
 
     fun addRequest(r: T): R {
