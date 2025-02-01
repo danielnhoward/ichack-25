@@ -33,4 +33,8 @@ dependencies {
     testImplementation("io.ktor:ktor-server-test-host")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
     implementation("org.jsoup:jsoup:1.18.3")
+    implementation("io.ktor:ktor-client-core")
+    implementation("io.ktor:ktor-client-cio:")
+    implementation("io.ktor:ktor-client-content-negotiation:2.3.7")
+    implementation("io.ktor:ktor-serialization-kotlinx-json:2.3.7")
 }
