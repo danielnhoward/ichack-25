@@ -6,13 +6,14 @@ import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.client.statement.readRawBytes
 import io.ktor.http.*
+import kotlinx.coroutines.delay
 import kotlinx.serialization.*
-import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.*
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.contextual
 import kotlinx.serialization.modules.polymorphic
 import kotlinx.serialization.modules.subclass
+import java.util.UUID
 import kotlin.io.encoding.Base64
 import kotlin.io.encoding.ExperimentalEncodingApi
 
@@ -26,7 +27,7 @@ data class Message(
 data class AnthropicRequest(
     val messages: List<Message>,
     val model: String = "claude-3-haiku-20240307",
-    val max_tokens: Int = 1024
+    @SerialName("max_tokens") val maxTokens: Int = 1024
 )
 
 @Serializable
@@ -63,9 +64,39 @@ data class AnthropicSource(
     val data: String
 )
 
+@Serializable
+data class MessageBatchRequest(
+    @SerialName("custom_id") val customId: String,
+    val params: AnthropicRequest
+)
+
+@Serializable
+data class MessageBatch(
+    val requests: List<MessageBatchRequest>
+)
+
+@Serializable
+data class MessageBatchInfoResponse(
+    val id: String,
+    @SerialName("results_url") val resultsUrl: String?,
+    @SerialName("processing_status") val processingStatus: String
+)
+
+@Serializable
+data class SingleMessageResult(
+    val customId: String,
+    val result: SingleMessageActualResult
+)
+
+@Serializable
+data class SingleMessageActualResult(
+    val message: AnthropicResponse
+)
+
 object AnthropicAPI {
     private val apiKey = System.getenv("ANTHROPIC_TOKEN")
     private val client = HttpClient(CIO)
+
 
     private val module = SerializersModule {
         polymorphic(AnthropicContent::class) {
@@ -75,13 +106,15 @@ object AnthropicAPI {
         contextual(AnthropicRequest.serializer())
         contextual(AnthropicResponse.serializer())
     }
+
     private val json = Json {
         ignoreUnknownKeys = true
         serializersModule = module
         encodeDefaults = true
     }
 
-    suspend fun request(request: AnthropicRequest): AnthropicResponse {
+
+    suspend fun makeRequest(request: AnthropicRequest): AnthropicResponse {
         try {
             val response: HttpResponse = client.post("https://api.anthropic.com/v1/messages") {
                 header("x-api-key", apiKey)
@@ -89,9 +122,11 @@ object AnthropicAPI {
                 contentType(ContentType.Application.Json)
                 setBody(json.encodeToString(request))
             }
-
+            println(request)
+            println(response.bodyAsText())
             return (json.decodeFromString<AnthropicResponse>(response.bodyAsText()))
         } catch (e: Exception) {
+            e.printStackTrace()
             throw e
         }
     }

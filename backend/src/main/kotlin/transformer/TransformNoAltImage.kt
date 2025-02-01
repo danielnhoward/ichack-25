@@ -1,6 +1,6 @@
 package com.example.transformer
 
-import com.example.ai.getImageAltText
+import com.example.ai.AIApi
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -15,18 +15,19 @@ data class ImageAlt(val id: String, val alt: String) : Transformation()
 
 class TransformNoAltImage(
     private val logger: Logger,
+    private val ai: AIApi,
 ) : Transformer {
-    override fun transformAll(document: Document): List<Transformation> {
+    override suspend fun transformAll(document: Document): List<Transformation> {
         val images: List<Element> =
             document
                 .select("img")
 
         return images
             .filter { !it.hasAttr("alt") }
-            .map { transform(it) }
+            .asyncMap { transform(it) }
     }
 
-    override fun transform(element: Element): Transformation {
+    override suspend fun transform(element: Element): Transformation {
         require(element.tagName() == "img") { "Must enter a img tag" }
         require(!element.hasAttr("alt")) { "Must not have an alt" }
 
@@ -34,7 +35,7 @@ class TransformNoAltImage(
 
         logger.log(Level.INFO, "Image link: $imageLink")
 
-        val imageAltText: String = runBlocking { getImageAltText(imageLink) }
+        val imageAltText: String = ai.getImageAltText(imageLink)
 
         val imageId: String = element.attr("data-ichack-id")
 
