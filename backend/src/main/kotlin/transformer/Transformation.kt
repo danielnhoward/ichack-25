@@ -6,11 +6,7 @@ import org.jsoup.nodes.Document
 import java.util.logging.Logger
 
 @Serializable
-data class Transformation(
-    val type: String,
-    val input: String,
-    val transformedTo: String,
-)
+sealed class Transformation
 
 class Transform(
     logger: Logger,

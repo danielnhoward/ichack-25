@@ -2,12 +2,16 @@ package com.example.transformer
 
 import com.example.ai.getImageAltText
 import kotlinx.coroutines.runBlocking
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
 import java.util.logging.Level
 import java.util.logging.Logger
 
-const val NO_ALT_IMAGE_TYPE = "no-alt-image"
+@Serializable
+@SerialName("image")
+data class ImageAlt(val id: String, val alt: String) : Transformation()
 
 class TransformNoAltImage(
     private val logger: Logger,
@@ -32,10 +36,8 @@ class TransformNoAltImage(
 
         val imageAltText: String = runBlocking { getImageAltText(imageLink) }
 
-        val newElement: Element = element.clone()
+        val imageId: String = element.attr("data-ichack-id")
 
-        newElement.attr("alt", imageAltText)
-
-        return Transformation(NO_ALT_IMAGE_TYPE, element.toString(), newElement.toString())
+        return ImageAlt(imageId, imageAltText)
     }
 }
