@@ -2,6 +2,7 @@ package com.example.transformer
 
 import com.example.ai.getAccessibleForm
 import com.example.ai.getLabelForInput
+import kotlinx.coroutines.runBlocking
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
 import java.util.logging.Level
@@ -55,13 +56,14 @@ class TransformNoInputLabel(
         val inputName: String = element.attr("name")
         val inputValue: String = element.attr("value")
 
-        val inputLabel: String =
+        val inputLabel: String = runBlocking {
             getLabelForInput(
                 id = inputId,
                 type = inputType,
                 name = inputName,
                 value = inputValue,
             )
+        }
 
         logger.log(Level.INFO, "InputLabel: $inputLabel")
 

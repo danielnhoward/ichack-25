@@ -1,6 +1,7 @@
 package com.example.transformer
 
 import com.example.ai.getImageAltText
+import kotlinx.coroutines.runBlocking
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
 import java.util.logging.Level
@@ -29,7 +30,7 @@ class TransformNoAltImage(
 
         logger.log(Level.INFO, "Image link: $imageLink")
 
-        val imageAltText: String = getImageAltText(imageLink)
+        val imageAltText: String = runBlocking { getImageAltText(imageLink) }
 
         val newElement: Element = element.clone()
 
