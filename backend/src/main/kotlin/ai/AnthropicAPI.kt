@@ -81,7 +81,16 @@ data class MessageBatchInfoResponse(
     @SerialName("processing_status") val processingStatus: String
 )
 
-@Seriali
+@Serializable
+data class SingleMessageResult(
+    val customId: String,
+    val result: SingleMessageActualResult
+)
+
+@Serializable
+data class SingleMessageActualResult(
+    val message: AnthropicResponse
+)
 
 object AnthropicAPI {
     private val apiKey = System.getenv("ANTHROPIC_TOKEN")
@@ -97,9 +106,9 @@ object AnthropicAPI {
             response = getBatchInfo(response.id)
         }
 
-        var
+        var results = getBatchResult(response.resultsUrl)
 
-        return@AsyncQueuer TODO()
+        return@AsyncQueuer results.associate { messageBatchIds[it.customId]!! to it.result.message }
     }
 
     private val module = SerializersModule {
@@ -152,16 +161,16 @@ object AnthropicAPI {
         }
     }
 
-
-    suspend fun getBatchResult(url: String): MessageBatchInfoResponse {
+    suspend fun getBatchResult(url: String): List<SingleMessageResult> {
         try {
             val response: HttpResponse = client.get(url) {
                 header("x-api-key", apiKey)
                 header("anthropic-version", "2023-06-01")
                 contentType(ContentType.Application.Json)
             }
-            println(response.bodyAsText())
-            return (json.decodeFromString<MessageBatchInfoResponse>(response.bodyAsText()))
+            return response.bodyAsText().lines().map {
+                json.decodeFromString(it)
+            }
         } catch (e: Exception) {
             e.printStackTrace()
             throw e
