@@ -1,5 +1,7 @@
 package com.example.transformer
 
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 import com.example.ai.AIApi
 import com.example.ai.ClaudeAIApi
 import kotlinx.serialization.Serializable
