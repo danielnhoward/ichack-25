@@ -2,9 +2,11 @@
 
 import {getTransforms} from '@/server/backend';
 
-import {useRef} from 'react';
+import {Loader2} from 'lucide-react';
+import {useRef, useState} from 'react';
 
 export default function Frame({url}: {url: string}) {
+    const [loaded, setLoaded] = useState(false);
     const frameRef = useRef<HTMLIFrameElement>(null);
 
     async function onFrameLoad() {
@@ -55,19 +57,35 @@ export default function Frame({url}: {url: string}) {
         });
 
         transforms.forEach((transform) => {
+            const id = parseInt(transform.id);
             switch (transform.type) {
             case 'image': {
-                elements[transform.id].alt = transform.alt;
-                elements[transform.id].title = transform.alt;
+                const image = elements[id] as HTMLImageElement;
+                image.alt = transform.alt;
+                image.title = transform.alt;
+                break;
+            }
+            case 'label': {
+                const label = elements[id] as HTMLLabelElement;
+                label.htmlFor = transform.type;
             }
             }
         });
+
+        setLoaded(true);
     }
 
-    return <iframe
-        className="w-full h-full"
-        src={`/proxy?url=${url}`}
-        ref={frameRef}
-        onLoad={onFrameLoad}
-    />;
+    return (
+        <>
+            <iframe
+                className={`w-full h-full ${loaded ? '' : 'hidden'}`}
+                src={`/proxy?url=${url}`}
+                ref={frameRef}
+                onLoad={onFrameLoad}
+            />
+            <div className={`flex justify-center items-center min-h-[100vh] ${loaded ? 'hidden' : ''}`}>
+                <Loader2 className="animate-spin"/>
+            </div>
+        </>
+    );
 }

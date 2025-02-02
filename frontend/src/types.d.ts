@@ -8,7 +8,7 @@ interface LabelTransform {
 
 type Transform = {
     id: string;
-} & ({type: 'image'} & ImageTransform) | ({type: 'label'} & LabelTransform)
+} & (({type: 'image'} & ImageTransform) | ({type: 'label'} & LabelTransform))
 
 interface Input {
     html: string;

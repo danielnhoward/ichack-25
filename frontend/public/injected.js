@@ -1,7 +1,9 @@
 const observer = new MutationObserver((mutationsList) => {
     mutationsList.forEach((mutation) => {
+        console.log(mutation);
         if (mutation.type !== 'childList') return;
         mutation.addedNodes.forEach((node) => {
+            console.log(node);
             if (!(node.nodeType instanceof Element)) return;
             /**
              * @type {Element}

@@ -1,7 +1,7 @@
 import type {NextRequest} from 'next/server';
 
 function replaceUrl(url?: string): string {
-    return `${process.env.ORIGIN}/proxy?url=${url === undefined ? '' : encodeURI(url)}`;
+    return `/proxy?url=${url === undefined ? '' : encodeURI(url)}`;
 }
 
 const INJECTED_SCRIPT = `<script src="/injected.js"></script>`;
@@ -11,7 +11,7 @@ const ALLOWED_HEADERS = [
     'Content-Type',
 ];
 
-const NON_HTML_ALLOWED_HEADERS = [
+const IMAGE_ALLOWED_HEADERS = [
     'content-length',
     'accept-ranges',
 ];
@@ -22,13 +22,19 @@ function isHtml(res: Response): boolean {
         false;
 }
 
-function modifyHeader(value: string, key: string, html: boolean): string | null {
+function isImage(res: Response): boolean {
+    return res.headers.get('content-type')?.startsWith('image') ||
+        res.headers.get('Content-Type')?.startsWith('image') ||
+        false;
+}
+
+function modifyHeader(value: string, key: string, image: boolean): string | null {
     switch (key) {
     case 'location':
         return replaceUrl(value);
     }
 
-    return ALLOWED_HEADERS.includes(key) || (!html && NON_HTML_ALLOWED_HEADERS.includes(key)) ? value : null;
+    return ALLOWED_HEADERS.includes(key) || (image && IMAGE_ALLOWED_HEADERS.includes(key)) ? value : null;
 }
 
 function procHeaders(headers: Headers, html: boolean): HeadersInit {
@@ -43,9 +49,10 @@ function procHeaders(headers: Headers, html: boolean): HeadersInit {
 
 function procBody(body: string, url: URL): string {
     return body
-        .replaceAll(/(src=("|'))([^h].*?("|'))/g, `$1${replaceUrl(url.origin)}$3`)
+        .replaceAll(/((href|src)=("|'))\/\/(.*?("|'))/g, `$1http://$4`)
+        .replaceAll(/((href|src)=)("|')?([^h"'].*?)("|')?( |>)/g, `$1"${replaceUrl(url.origin)}$4"$6`)
         .replaceAll(/((href|src)=("|'))(http.*?("|'))/g, `$1${replaceUrl()}$4`)
-        .replace(/(<\/body>)/, `${INJECTED_SCRIPT}$1`);
+        .replace(/(<body.*?>)/, `$1${INJECTED_SCRIPT}`);
 }
 
 async function getBody(res: Response, url: string): Promise<BodyInit | null> {
@@ -72,6 +79,6 @@ export async function GET(req: NextRequest) {
 
     return new Response(body, {
         status: proxyRes.status,
-        headers: procHeaders(proxyRes.headers, isHtml(proxyRes)),
+        headers: procHeaders(proxyRes.headers, isImage(proxyRes)),
     });
 }
