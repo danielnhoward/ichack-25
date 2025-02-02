@@ -69,8 +69,20 @@ export default function Frame({url}: {url: string}) {
             case 'link': {
                 const label = elements[id] as HTMLLabelElement;
                 label.ariaLabel = transform.alt;
+                break;
             }
+            case 'button': {
+                const button = document.createElement("button");
+                const div = elements[id] as HTMLDivElement;
+                button.innerHTML = div.innerText;
+
+                for (let attr of div.attributes) {
+                    button.setAttribute(attr.name, attr.value);
+                }
+                div.replaceWith(button);
+                break;
             }
+        }
         });
 
         setLoaded(true);
@@ -84,7 +96,7 @@ export default function Frame({url}: {url: string}) {
                 ref={frameRef}
                 onLoad={onFrameLoad}
             />
-            <div className={`flex justify-center items-center min-h-[100vh] ${loaded ? 'hiddenk' : ''}`}>
+            <div className={`flex justify-center items-center min-h-[100vh] ${loaded ? 'hidden' : ''}`}>
                 <Loader2 className="animate-spin"/>
             </div>
         </>
