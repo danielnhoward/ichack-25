@@ -9,5 +9,11 @@ export async function getTransforms(input: Input): Promise<Transform[]> {
         body: JSON.stringify(input),
     });
 
-    return await response.json();
+    console.log(input);
+    console.log(response);
+
+    const t = await response.json();
+    console.log(t);
+    return t;
+    // return await response.json();
 }

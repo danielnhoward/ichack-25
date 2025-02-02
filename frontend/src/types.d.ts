@@ -6,9 +6,11 @@ interface LabelTransform {
     for: string;
 }
 
-type Transform = ({type: 'image'} & ImageTransform) | ({type: 'label'} & LabelTransform)
+type Transform = {
+    id: string;
+} & ({type: 'image'} & ImageTransform) | ({type: 'label'} & LabelTransform)
 
 interface Input {
     html: string;
-    text: string;
+    // text: string;
 }
