@@ -108,6 +108,7 @@ export default function Frame({url}: {url: string}) {
                     <div className="m-3">
                         Found <span className={transformsState?.length === 0 ? 'text-green-600' : 'text-red-600'}>{transformsState?.length}</span> issue{transformsState?.length === 1 ? '' : 's'}
                     </div>
+                    {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
                     <a href="/" className="m-3 hover:underline"><b>Access Now</b></a>
                 </div>
                 <iframe
