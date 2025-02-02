@@ -83,7 +83,7 @@ export default function Frame({url}: {url: string}) {
                 ref={frameRef}
                 onLoad={onFrameLoad}
             />
-            <div className={`flex justify-center items-center min-h-[100vh] ${loaded ? 'hidden' : ''}`}>
+            <div className={`flex justify-center items-center min-h-[100vh] ${loaded ? 'hiddenk' : ''}`}>
                 <Loader2 className="animate-spin"/>
             </div>
         </>
