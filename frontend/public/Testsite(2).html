@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Red photography website</title>
+    <!-- External Fonts and Icons -->
+    <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,700&display=swap" rel="stylesheet">
+    <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <!-- Styles -->
+    <style>
+        /* Reset Styles */
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Base Styles */
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #1a1a1a;
+            color: #fff;
+            overflow-x: hidden;
+        }
+
+        /* Header Styles */
+        header {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+            background: url('header-background.jpg') no-repeat center center/cover;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        header::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(26, 26, 26, 0.6);
+        }
+
+        header h1 {
+            position: relative;
+            font-size: 80px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 5px;
+            text-align: center;
+            z-index: 1;
+            color: #fff;
+            animation: fadeInDown 2s;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Navigation Styles */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(0,0,0,0.8);
+            padding: 20px 0;
+            z-index: 1000;
+            transition: background 0.5s;
+        }
+
+        nav.scrolled {
+            background: #000;
+        }
+
+        nav .container {
+            width: 90%;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        nav .logo {
+            font-size: 30px;
+            font-weight: 700;
+            color: #fff;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+        }
+
+        nav ul li {
+            margin-left: 30px;
+        }
+
+        nav ul li a {
+            text-decoration: none;
+            color: #bbbbbb; /* Poor contrast color */
+            font-size: 18px;
+            transition: color 0.3s;
+        }
+
+        nav ul li a:hover {
+            color: #fff;
+        }
+
+        /* Main Content Styles */
+        .about {
+            background-color: #eaeaea;
+            color: #333;
+            padding: 100px 0;
+        }
+
+        .about .container {
+            width: 80%;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .about h2 {
+            font-size: 50px;
+            margin-bottom: 20px;
+            color: #cfcfcf; /* Poor contrast color */
+        }
+
+        .about p {
+            font-size: 20px;
+            line-height: 1.6;
+            color: #bfbfbf; /* Poor contrast color */
+        }
+
+        /* Parallax Section */
+        .parallax {
+            background: url('parallax-background.jpg') no-repeat center center/cover;
+            height: 500px;
+            position: relative;
+            background-attachment: fixed;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .parallax h2 {
+            color: #fff;
+            font-size: 60px;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+
+        /* Services Section */
+        .services {
+            background-color: #fff;
+            padding: 100px 0;
+        }
+
+        .services .container {
+            width: 85%;
+            margin: 0 auto;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+        }
+
+        .service-item {
+            width: 30%;
+            margin-bottom: 50px;
+            text-align: center;
+        }
+
+        .service-item i {
+            font-size: 60px;
+            color: #e67e22;
+            margin-bottom: 20px;
+        }
+
+        .service-item h3 {
+            font-size: 24px;
+            margin-bottom: 10px;
+            color: #444;
+        }
+
+        .service-item p {
+            font-size: 16px;
+            color: #666;
+        }
+
+        /* Portfolio Section */
+        .portfolio {
+            background-color: #f5f5f5;
+            padding: 100px 0;
+        }
+
+        .portfolio .container {
+            width: 90%;
+            margin: 0 auto;
+        }
+
+        .portfolio h2 {
+            font-size: 50px;
+            text-align: center;
+            margin-bottom: 50px;
+            color: #2c3e50;
+        }
+
+        .portfolio-grid {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+        }
+
+        .portfolio-item {
+            width: 30%;
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+
+        .portfolio-item img {
+            width: 100%;
+            transition: transform 0.5s;
+        }
+
+        .portfolio-item:hover img {
+            transform: scale(1.1);
+        }
+
+        /* Contact Section */
+        .contact {
+            background-color: #1a1a1a;
+            color: #fff;
+            padding: 100px 0;
+        }
+
+        .contact .container {
+            width: 80%;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .contact-info {
+            width: 45%;
+        }
+
+        .contact-info h2 {
+            font-size: 40px;
+            margin-bottom: 20px;
+            color: #bbb; /* Poor contrast color */
+        }
+
+        .contact-info p {
+            font-size: 18px;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            color: #999; /* Poor contrast color */
+        }
+
+        .contact-form {
+            width: 50%;
+        }
+
+        .contact-form form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .contact-form input,
+        .contact-form textarea {
+            padding: 15px;
+            margin-bottom: 20px;
+            border: none;
+            border-radius: 5px;
+            background-color: #333;
+            color: #fff;
+            font-size: 16px;
+        }
+
+        .contact-form button {
+            padding: 15px;
+            border: none;
+            border-radius: 5px;
+            background-color: #e67e22;
+            color: #fff;
+            font-size: 18px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .contact-form button:hover {
+            background-color: #d35400;
+        }
+
+        /* Footer Styles */
+        footer {
+            background-color: #000;
+            color: #666; /* Poor contrast color */
+            text-align: center;
+            padding: 20px 0;
+        }
+
+        /* Scroll Animation */
+        [data-animate] {
+            opacity: 0;
+            transform: translateY(100px);
+            transition: opacity 0.9s ease-out, transform 0.9s ease-out;
+        }
+
+        [data-animate].active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+
+<nav id="navbar">
+    <div class="container">
+        <div class="logo">RedPhoto</div>
+        <ul>
+            <li><a href="#about">About</a></li>
+            <li><a href="#services">Services</a></li>
+            <li><a href="#portfolio">Portfolio</a></li>
+            <li><a href="#contact">Contact</a></li>
+        </ul>
+    </div>
+</nav>
+
+<header>
+    <h1>Elevate Your Experience</h1>
+</header>
+
+<section class="about" id="about" data-animate>
+    <div class="container">
+        <h2>Who We Are</h2>
+        <p>
+            We are a premier photography business committed to capturing your most cherished moments. Our team of skilled photographers works tirelessly to bring your vision to life through stunning imagery.
+        </p>
+    </div>
+</section>
+
+<section class="parallax">
+    <h2>Innovate. Create. Inspire.</h2>
+</section>
+
+<!-- Services Section -->
+<section class="services" id="services" data-animate>
+    <div class="container">
+        <div class="service-item">
+            <i class="fa fa-laptop"></i>
+            <h3>Web Design</h3>
+            <p>Crafting visually stunning and user-friendly websites using our pictures.</p>
+        </div>
+        <div class="service-item">
+            <i class="fa fa-camera"></i>
+            <h3>Photography</h3>
+            <p>Taking unique and bespoke photos and videos.</p>
+        </div>
+        <div class="service-item">
+            <i class="fa fa-download"></i>
+            <h3>Online delivery</h3>
+            <p>Free online downloads to get the full resolution originals.</p>
+        </div>
+    </div>
+</section>
+
+<section class="portfolio" id="portfolio" data-animate>
+    <div class="container">
+        <h2>Our Photos</h2>
+        <div class="portfolio-grid">
+            <div class="portfolio-item">
+                <img src="https://cdn.dominosmedia.co.uk/i/dominos/1500-piz-original-cheese-and-tomato">
+            </div>
+            <div class="portfolio-item">
+                <img src="https://www.kids-world-travel-guide.com/images/usa_statueofliberty_ssk500.jpeg">
+            </div>
+            <div class="portfolio-item">
+                <img src="https://lh5.googleusercontent.com/proxy/MVR83yicQRapYULGr35P6ogG5hxI_6-NwKTwVjz8b1J0l0KbvfmwpKEtCedSuHoO9ns6gqfAn6WFexXI2-L3OWyC8d_jxpTgOVCjvlvd2B8mdWFNGzmC">
+            </div>
+            <div class="portfolio-item">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR8qOxeZhYvU7v9pmEA7tFjOTlehUMAuiiDoA&s">
+            </div>
+            <div class="portfolio-item">
+                <img src="https://www.lovethegarden.com/sites/default/files/content/articles/UK_wildbirds-01-robin.jpg">
+            </div>
+            <div class="portfolio-item">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/FullMoon2010.jpg/1200px-FullMoon2010.jpg">
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="contact" id="contact" data-animate>
+    <div class="container">
+        <div class="contact-info">
+            <h2>Get In Touch</h2>
+            <p>
+                Ready to start your next project? Send us a message and we’ll get back to you as soon as possible.
+            </p>
+            <p>
+                <i class="fa fa-envelope"></i> email@example.com
+            </p>
+            <p>
+                <i class="fa fa-phone"></i> +1 234 567 890
+            </p>
+            <p>
+                <i class="fa fa-map-marker"></i> 1234 Street Name, City, Country
+            </p>
+        </div>
+        <div class="contact-form">
+            <form>
+                <input type="text" placeholder="Your Name">
+                <input type="email" placeholder="Your Email">
+                <input type="text" placeholder="Subject">
+                <textarea placeholder="Your Message"></textarea>
+                <button type="submit">Send Message</button>
+            </form>
+        </div>
+    </div>
+</section>
+
+<!-- Footer -->
+<footer>
+    &copy; 2023 Business website
+</footer>
+
+<!-- Scripts -->
+<script>
+    // Sticky Navigation on Scroll
+    window.addEventListener('scroll', function() {
+        const nav = document.getElementById('navbar');
+        if (window.pageYOffset > 0) {
+            nav.classList.add('scrolled');
+        } else {
+            nav.classList.remove('scrolled');
+        }
+
+        // Animate sections on scroll
+        const animatedItems = document.querySelectorAll('[data-animate]');
+        animatedItems.forEach((item) => {
+            const rect = item.getBoundingClientRect();
+            if (rect.top <= window.innerHeight - 100) {
+                item.classList.add('active');
+            }
+        });
+    });
+</script>
+
+</body>
+</html>
