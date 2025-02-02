@@ -33,7 +33,7 @@ export default function HomePage() {
         <PageHeader className="grow">
             <PageHeaderHeading>Access Now</PageHeaderHeading>
             <PageHeaderDescription>
-                Our tool takes an inaccessible website and transforms it by automatically generating meaningful alt text for images and adding labels to form elements. This makes the website more user-friendly and accessible, especially for individuals who rely on screen readers.
+                Our tool is designed to make websites more accessible and user-friendly. It automatically adds descriptions to images and links using AI, helping people who use screen readers understand the content better. With our tool, creating an inclusive and welcoming online experience is simple and effortless.
             </PageHeaderDescription>
             <PageActions>
                 <form className="w-full flex flex-col gap-4 items-center" onSubmit={redirectPage}>
