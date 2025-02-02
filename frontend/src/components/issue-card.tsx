@@ -55,7 +55,7 @@ function getDescriptions(transform: Transform, element: HTMLElement) {
     }
     case 'link': {
         const link = element as HTMLAnchorElement;
-        return <>
+        return <div className="m-4">
             When a screen reader attempts to read a link, it sometimes fails to find its definition. By setting
             <code>areaLabel</code>, the screen reader is able to get a definition for the link to read out to the
             user. We have detected that the link to the site below does not have this property.
@@ -63,18 +63,18 @@ function getDescriptions(transform: Transform, element: HTMLElement) {
             <code>{link.href}</code>
 
             We think that a suitable <code>alt</code> value for this could be &quot;<i>{transform.alt}</i>&quot;.
-        </>;
+        </div>;
     }
     case 'button':
-        return <>
+        return <div className="m-4">
             When a screen reader attempts to read a clickable <code>div</code>, it fails to announce to
             the user that the <code>div</code>. It should instead use a <code>button</code> for it&apos;s action to be clearer.
-        </>;
+        </div>;
 
     case 'language':
-        return <>
+        return <div className="m-4">
             The website should set the language of content in it&apos;s html tag. We have automatically detected the
             language to be: {transform.lang}.
-        </>;
+        </div>;
     }
 }
