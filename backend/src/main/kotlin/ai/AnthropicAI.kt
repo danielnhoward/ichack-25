@@ -57,9 +57,10 @@ private val getLabelTextPrompt = """
 
 class AnthropicAI : AI {
     private val anthropicRequestCache: ConcurrentMap<AnthropicRequest, AnthropicResponse> = ConcurrentHashMap()
+    private val imageContentCache: ConcurrentMap<String, ImageContent> = ConcurrentHashMap()
 
     override fun getImageAltText(url: String): String {
-        val content = runBlocking { AnthropicAPI.toImageContent(url) }
+        val content = cachedImageContent(url)
         val req =
             AnthropicRequest(
                 listOf(
@@ -94,7 +95,7 @@ class AnthropicAI : AI {
             ))
         )
         val res = cachedReq(req)
-        return res.content.first { it is TextContent }.let {
+        res.content.first { it is TextContent }.let {
             return (it as TextContent).text
         }
     }
@@ -108,6 +109,18 @@ class AnthropicAI : AI {
             val computedRes: AnthropicResponse = runBlocking { AnthropicAPI.makeRequest(req) }
             anthropicRequestCache[req] = computedRes
             computedRes
+        }
+    }
+
+    private fun cachedImageContent(url: String): ImageContent {
+        val cachedImageContent: ImageContent? = imageContentCache[url]
+
+        return if (cachedImageContent != null) {
+            cachedImageContent
+        } else {
+            val computedImageContent: ImageContent = runBlocking { AnthropicAPI.toImageContent(url) }
+            imageContentCache[url] = computedImageContent
+            computedImageContent
         }
     }
 }
