@@ -13,7 +13,7 @@ sealed class Transformation
 class Transform(
     private val logger: Logger,
 ) {
-    private val ai: AI = AnthropicAI(logger)
+    private val ai: AI = AnthropicAI()
 
     fun transform(input: String): List<Transformation> {
         val document: Document = Jsoup.parse(input)
