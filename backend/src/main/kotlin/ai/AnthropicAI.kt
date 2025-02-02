@@ -1,10 +1,6 @@
 package com.example.ai
 
-import com.example.ai.AnthropicAPI.makeRequest
-import com.example.transformer.asyncMap
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
-import java.util.UUID
 
 private val getImageAltPrompt = """
     You will be writing alt text for an image based on a provided description. The image description is as follows:
@@ -28,49 +24,19 @@ private val getImageAltPrompt = """
     Only return your final alt text
 """.trimIndent()
 
-class ClaudeAIApi : AIApi {
-
-    public suspend fun init(): ClaudeAIApi {
-        queuer.initialise()
-        return this
-    }
-
-    private val queuer = Queuer<AnthropicRequest, AnthropicResponse> { stuff ->
-        return@Queuer runBlocking {
-            println("Requesting")
-//            val messageBatchIds = stuff.associateBy { UUID.randomUUID().toString() }
-//            val batchRequest = MessageBatch(messageBatchIds.entries.map { (id, req) ->
-//                MessageBatchRequest(id, req)
-//            })
-//            var response = makeRequest(batchRequest)
-//            while (response.processingStatus != "ended") {
-//                response = getBatchInfo(response.id)
-//                println("Retrying")
-//                delay(30000)
-//            }
-//
-//            var results = getBatchResult(response.resultsUrl!!)
-//
-//            results.associate { messageBatchIds[it.customId]!! to it.result.message }
-            return@runBlocking stuff.asyncMap {
-                it to makeRequest(it)
-            }.associate { it }
-        }
-    }
-
-
-    fun request(request: AnthropicRequest): AnthropicResponse {
-        return queuer.addRequest(request)
-    }
-
-    override suspend fun getImageAltText(url: String): String {
+class AnthropicAI : AI {
+    override fun getImageAltText(url: String): String {
         val req = AnthropicRequest(listOf(Message(content=listOf(
-            AnthropicAPI.toImageContent(url),
+            runBlocking { AnthropicAPI.toImageContent(url) },
             TextContent(getImageAltPrompt)
         ))))
-        val res = request(req)
+        val res = runBlocking { AnthropicAPI.makeRequest(req) }
         res.content.first { it is TextContent }.let {
             return (it as TextContent).text
         }
+    }
+
+    override fun getUrlDescription(url: String, text: String): String {
+        TODO("Not yet implemented")
     }
 }
