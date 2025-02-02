@@ -1,7 +1,3 @@
-import Sidebar from '@/components/sidebar';
-import {SidebarProvider, SidebarTrigger} from '@/components/ui/sidebar';
-
-
 // eslint-disable-next-line camelcase
 import {Geist, Geist_Mono} from 'next/font/google';
 

@@ -1,14 +1,15 @@
 'use client';
 
+import Sidebar from './sidebar';
 import {SidebarProvider, SidebarTrigger} from './ui/sidebar';
 import {getTransforms} from '@/server/backend';
 
 import {Loader2} from 'lucide-react';
 import {useRef, useState} from 'react';
-import Sidebar from './sidebar';
 
 export default function Frame({url}: {url: string}) {
     const [loaded, setLoaded] = useState(false);
+    const [transformsState, setTransformsState] = useState<Transform[] | null>(null);
     const frameRef = useRef<HTMLIFrameElement>(null);
 
     async function onFrameLoad() {
@@ -58,6 +59,8 @@ export default function Frame({url}: {url: string}) {
             // text: clonedDocument.documentElement.textContent || '',
         });
 
+        setTransformsState(transforms);
+
         transforms.forEach((transform) => {
             console.log(transform);
             const id = parseInt(transform.id);
@@ -74,17 +77,17 @@ export default function Frame({url}: {url: string}) {
                 break;
             }
             case 'button': {
-                const button = document.createElement("button");
+                const button = document.createElement('button');
                 const div = elements[id] as HTMLDivElement;
                 button.innerHTML = div.innerText;
 
-                for (let attr of div.attributes) {
+                for (const attr of div.attributes) {
                     button.setAttribute(attr.name, attr.value);
                 }
                 div.replaceWith(button);
                 break;
             }
-        }
+            }
         });
 
         setLoaded(true);
@@ -93,8 +96,14 @@ export default function Frame({url}: {url: string}) {
     return (
         <SidebarProvider>
             <Sidebar/>
-            <main className="w-full">
-                <SidebarTrigger className={loaded ? '' : 'hidden'}/>
+            <main className="w-full flex flex-col">
+                <div className={`flex items-center justify-between ${loaded ? '' : 'hidden'}`}>
+                    <SidebarTrigger/>
+                    <p className="m-3">
+                        Found <span className={transformsState?.length === 0 ? 'text-green-600' : 'text-red-600'}>{transformsState?.length}</span> issue{transformsState?.length === 1 ? '' : 's'}
+                    </p>
+                    <p className="m-3"><b>Access.Now</b></p>
+                </div>
                 <iframe
                     title="Site Iframe"
                     className={`w-full h-full ${loaded ? '' : 'hidden'}`}
