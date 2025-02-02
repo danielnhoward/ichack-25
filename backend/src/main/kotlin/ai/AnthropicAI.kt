@@ -40,6 +40,7 @@ private val getLabelTextPrompt = """
     4. Aim for a length of 3-7 words.
     5. Include the action or destination of the link if it's clear from the context.
     6. Avoid redundant words like "link to" or "button for" as screen readers already announce these elements.
+    7. Ignore the proxy in the URL.
     Output only the aria-label description, without any additional text or explanation.
     Here are some examples:
     URL: https://www.example.com/products/smartphones
