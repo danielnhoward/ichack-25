@@ -1,6 +1,7 @@
 package com.example.ai
 
 import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
@@ -11,7 +12,7 @@ import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.atomic.AtomicBoolean
 
-const val WAIT_TIME: Long = 1000
+const val WAIT_TIME: Long = 10000
 
 class Queuer<T, R>(private val op: (List<T>) -> Map<T, R>) {
     private var latch: CountDownLatch? = null
@@ -44,6 +45,8 @@ class Queuer<T, R>(private val op: (List<T>) -> Map<T, R>) {
         }
 
         latch?.await()
+        println(responses.size)
+        println(responses[r])
         return responses[r]!!
     }
 

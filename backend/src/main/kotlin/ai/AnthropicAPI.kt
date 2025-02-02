@@ -2,6 +2,7 @@ package com.example.ai
 
 import io.ktor.client.*
 import io.ktor.client.engine.cio.*
+import io.ktor.client.plugins.timeout
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.client.statement.readRawBytes
@@ -115,6 +116,7 @@ object AnthropicAPI {
 
 
     suspend fun makeRequest(request: AnthropicRequest): AnthropicResponse {
+        println("requesting abs")
         try {
             val response: HttpResponse = client.post("https://api.anthropic.com/v1/messages") {
                 header("x-api-key", apiKey)
@@ -132,14 +134,18 @@ object AnthropicAPI {
 
     @OptIn(ExperimentalEncodingApi::class)
     suspend fun toImageContent(url: String): ImageContent {
+        println("hi")
         try {
+            println("hi2")
             val req = client.get(url)
+            println("hi3")
             return req.readRawBytes().let {
                 val type = with(req.contentType()!!) { "$contentType/$contentSubtype" }
                 ImageContent(AnthropicSource("base64", type, Base64.encode(it)))
             }
         } catch (e: Exception) {
-            println("Error: ${e.message}")
+            e.printStackTrace()
+            println("Error: ${e}")
             throw e
         }
     }
