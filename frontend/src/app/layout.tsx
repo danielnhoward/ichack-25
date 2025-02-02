@@ -17,7 +17,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
     title: 'Access Now',
-    description: 'Our tool takes an inaccessible website and transforms it by automatically generating meaningful alt text for images and adding labels to form elements. This makes the website more user-friendly and accessible, especially for individuals who rely on screen readers.',
+    description: 'Our tool is designed to make websites more accessible and user-friendly. It automatically adds descriptions to images and links using AI, helping people who use screen readers understand the content better. With our tool, creating an inclusive and welcoming online experience is simple and effortless.',
 };
 
 export default function RootLayout({
