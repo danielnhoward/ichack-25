@@ -43,8 +43,8 @@ function procHeaders(headers: Headers, html: boolean): HeadersInit {
 
 function procBody(body: string, url: URL): string {
     return body
+        .replaceAll(/(src=("|'))([^h].*?("|'))/g, `$1${replaceUrl(url.origin)}$3`)
         .replaceAll(/((href|src)=("|'))(http.*?("|'))/g, `$1${replaceUrl()}$4`)
-        .replaceAll(/(src=("|'))(.*?("|'|))/g, `$1${replaceUrl(url.origin)}$3`)
         .replace(/(<\/body>)/, `${INJECTED_SCRIPT}$1`);
 }
 
