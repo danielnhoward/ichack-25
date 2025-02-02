@@ -29,7 +29,7 @@ export default function IssueCard({transform, element}: {transform: Transform, e
     );
 }
 
-function getTitle(type: 'image' | 'link' | 'button') {
+function getTitle(type: 'image' | 'link' | 'button' | 'language') {
     switch (type) {
     case 'image':
         return <>Images should always contain an <code>alt</code> property</>;
@@ -37,6 +37,8 @@ function getTitle(type: 'image' | 'link' | 'button') {
         return <>Links should always contain <code>ariaLabel</code> property</>;
     case 'button':
         return <>All clickable <code>div</code> elements should instead use a <code>button</code></>;
+    case 'language':
+        return <>The website should set it's language</>
     }
 }
 
@@ -69,5 +71,8 @@ function getDescriptions(transform: Transform, element: HTMLElement) {
     case 'button':
         return <>When a screen reader attempts to read a clickable <code>div</code>, it fails to announce to the user that the 
         <code>div</code>. It should instead use a <code>button</code> for it's action to be clearer</>;
-    }
+
+    case 'language':
+        return <>The website should set the language of content in it's html tag. We have automatically detected the language to be: <code>&lt;html lang="{transform.lang}"&gt;</code>
+</>; 
 }
