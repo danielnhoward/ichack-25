@@ -37,7 +37,6 @@ import java.util.logging.Logger
         val text: String = element.text()
 
         logger.log(Level.INFO, "Transforming link: $imageLink")
-        println("test1")
         val imageAltText: String = ai.getUrlDescription(imageLink, text)
 
         val imageId: String = element.attr("data-ichack-id")
