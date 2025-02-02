@@ -52,7 +52,7 @@ class ClaudeAIApi : AIApi {
 //            var results = getBatchResult(response.resultsUrl!!)
 //
 //            results.associate { messageBatchIds[it.customId]!! to it.result.message }
-            return@runBlocking stuff.map {
+            return@runBlocking stuff.asyncMap {
                 it to makeRequest(it)
             }.associate { it }
         }
