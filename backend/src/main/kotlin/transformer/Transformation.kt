@@ -1,10 +1,7 @@
 package com.example.transformer
 
-import kotlinx.coroutines.async
-import kotlinx.coroutines.coroutineScope
-import com.example.ai.AIApi
-import com.example.ai.ClaudeAIApi
-import kotlinx.coroutines.Dispatchers
+import com.example.ai.AI
+import com.example.ai.AnthropicAI
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.Serializable
 import org.jsoup.Jsoup
@@ -19,14 +16,11 @@ class Transform(
 ) {
     fun transform(input: String): List<Transformation> {
 
+        val document: Document = Jsoup.parse(input)
+        val ai: AI = AnthropicAI()
+        val transformNoAltImage: Transformer = TransformNoAltImage(logger, ai)
 
-        return runBlocking {
-            val document: Document = Jsoup.parse(input)
-            println("before")
-            val ai: AIApi = ClaudeAIApi().init()
-            println("After")
-            val transformNoAltImage: Transformer = TransformNoAltImage(logger, ai)
-            transformNoAltImage.transformAll(document)
-        }
+
+        return transformNoAltImage.transformAll(document)
     }
 }

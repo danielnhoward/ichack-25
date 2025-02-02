@@ -1,7 +1,6 @@
 package com.example.transformer
 
-import com.example.ai.AIApi
-import kotlinx.coroutines.runBlocking
+import com.example.ai.AI
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import org.jsoup.nodes.Document
@@ -15,19 +14,19 @@ data class ImageAlt(val id: String, val alt: String) : Transformation()
 
 class TransformNoAltImage(
     private val logger: Logger,
-    private val ai: AIApi,
+    private val ai: AI,
 ) : Transformer {
-    override suspend fun transformAll(document: Document): List<Transformation> {
+    override fun transformAll(document: Document): List<Transformation> {
         val images: List<Element> =
             document
                 .select("img")
 
         return images
             .filter { !it.hasAttr("alt") }
-            .asyncMap { transform(it) }
+            .map { transform(it) }
     }
 
-    override suspend fun transform(element: Element): Transformation {
+    override fun transform(element: Element): Transformation {
         require(element.tagName() == "img") { "Must enter a img tag" }
         require(!element.hasAttr("alt")) { "Must not have an alt" }
 
