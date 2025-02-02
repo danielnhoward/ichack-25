@@ -91,6 +91,7 @@ export default function Frame({url}: {url: string}) {
     return (
         <>
             <iframe
+                title="iframe title"
                 className={`w-full h-full ${loaded ? '' : 'hidden'}`}
                 src={`/proxy?url=${url}`}
                 ref={frameRef}
