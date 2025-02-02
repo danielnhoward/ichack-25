@@ -2,6 +2,7 @@
 import {Geist, Geist_Mono} from 'next/font/google';
 
 import type {Metadata} from 'next';
+
 import './globals.css';
 
 const geistSans = Geist({
@@ -15,14 +16,14 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-    title: 'Page Accesability Improver',
-    description: 'Page Accesability Improver',
+    title: 'Access Now',
+    description: 'Our tool takes an inaccessible website and transforms it by automatically generating meaningful alt text for images and adding labels to form elements. This makes the website more user-friendly and accessible, especially for individuals who rely on screen readers.',
 };
 
 export default function RootLayout({
     children,
 }: Readonly<{
-  children: React.ReactNode;
+    children: React.ReactNode;
 }>) {
     return (
         <html lang="en">

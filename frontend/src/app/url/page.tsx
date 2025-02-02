@@ -7,7 +7,7 @@ export default async function Url(props: {searchParams: Promise<SearchParams>}) 
     const url = searchParams['url'] as string;
 
     return (
-        <div className="w-[100vw] h-[100vh]">
+        <div className="w-full h-full">
             <Frame url={url}/>
         </div>
     );
