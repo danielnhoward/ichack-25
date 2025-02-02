@@ -1,7 +1,7 @@
 import type {NextRequest} from 'next/server';
 
 function replaceUrl(url?: string): string {
-    return `/proxy?url=${url === undefined ? '' : encodeURI(url)}`;
+    return `${process.env.ORIGIN}/proxy?url=${url === undefined ? '' : encodeURI(url)}`;
 }
 
 const INJECTED_SCRIPT = `<script src="/injected.js"></script>`;
@@ -50,8 +50,8 @@ function procHeaders(headers: Headers, html: boolean): HeadersInit {
 function procBody(body: string, url: URL): string {
     return body
         .replaceAll(/((href|src)=("|'))\/\/(.*?("|'))/g, `$1http://$4`)
-        .replaceAll(/((href|src)=)("|')?([^h"'].*?)("|')?( |>)/g, `$1"${replaceUrl(url.origin)}$4"$6`)
         .replaceAll(/((href|src)=("|'))(http.*?("|'))/g, `$1${replaceUrl()}$4`)
+        .replaceAll(/((href|src)=)("|')([^h].*?)("|')/g, `$1"${replaceUrl(url.origin)}$4"`)
         .replace(/(<body.*?>)/, `$1${INJECTED_SCRIPT}`);
 }
 
