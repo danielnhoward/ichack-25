@@ -10,6 +10,7 @@ import {useRef, useState} from 'react';
 export default function Frame({url}: {url: string}) {
     const [loaded, setLoaded] = useState(false);
     const [transformsState, setTransformsState] = useState<Transform[] | null>(null);
+    const [elementsState, setElementsState] = useState<HTMLElement[] | null>(null);
     const frameRef = useRef<HTMLIFrameElement>(null);
 
     async function onFrameLoad() {
@@ -62,10 +63,10 @@ export default function Frame({url}: {url: string}) {
         setTransformsState(transforms);
 
         transforms.forEach((transform) => {
-            console.log(transform);
             const id = parseInt(transform.id);
             switch (transform.type) {
             case 'image': {
+                console.log(transform, elements);
                 const image = elements[id] as HTMLImageElement;
                 image.alt = transform.alt;
                 image.title = transform.alt;
@@ -95,18 +96,19 @@ export default function Frame({url}: {url: string}) {
         });
 
         setLoaded(true);
+        setElementsState(elements);
     }
 
     return (
         <SidebarProvider>
-            <Sidebar/>
+            {transformsState === null || elementsState === null ? <></> : <Sidebar transforms={transformsState} elements={elementsState}/>}
             <main className="w-full flex flex-col">
                 <div className={`flex items-center justify-between ${loaded ? '' : 'hidden'}`}>
                     <SidebarTrigger/>
                     <p className="m-3">
                         Found <span className={transformsState?.length === 0 ? 'text-green-600' : 'text-red-600'}>{transformsState?.length}</span> issue{transformsState?.length === 1 ? '' : 's'}
                     </p>
-                    <p className="m-3"><b>Access.Now</b></p>
+                    <p className="m-3"><b>Access Now</b></p>
                 </div>
                 <iframe
                     title="Site Iframe"
