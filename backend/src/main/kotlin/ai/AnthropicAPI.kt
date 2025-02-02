@@ -122,8 +122,7 @@ object AnthropicAPI {
                 contentType(ContentType.Application.Json)
                 setBody(json.encodeToString(request))
             }
-            println(request)
-            println(response.bodyAsText())
+
             return (json.decodeFromString<AnthropicResponse>(response.bodyAsText()))
         } catch (e: Exception) {
             e.printStackTrace()
