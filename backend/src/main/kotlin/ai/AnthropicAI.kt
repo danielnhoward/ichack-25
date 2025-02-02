@@ -55,6 +55,12 @@ private val getLabelTextPrompt = """
     Now, create an appropriate aria-label for the given URL and link text.
 """.trimIndent()
 
+val identifyLanguagePrompt = """
+    Identify the language of the following text: {{TEXT}}
+    
+    Please output as ONLY a html language code, for example en.
+""".trimIndent()
+
 class AnthropicAI : AI {
     private val anthropicRequestCache: ConcurrentMap<AnthropicRequest, AnthropicResponse> = ConcurrentHashMap()
     private val imageContentCache: ConcurrentMap<String, ImageContent> = ConcurrentHashMap()
@@ -96,6 +102,20 @@ class AnthropicAI : AI {
         )
         val res = cachedReq(req)
         res.content.first { it is TextContent }.let {
+            return (it as TextContent).text
+        }
+    }
+
+    override fun getLanguage(
+        text: String
+    ): String {
+        val req = AnthropicRequest(
+            listOf(Message(
+                content=listOf(TextContent(identifyLanguagePrompt.replace("{{TEXT}}", text)))
+            ))
+        )
+        val res = cachedReq(req)
+        return res.content.first { it is TextContent }.let {
             return (it as TextContent).text
         }
     }

@@ -20,9 +20,11 @@ class Transform(
         val transformNoAltImage: Transformer = TransformNoAltImage(logger, ai)
         val transformNoUrlDesc: Transformer = TransformLinkNoDescription(logger, ai)
         val transformWithDiv: Transformer = TransformDivWithClick(logger, ai)
+        val transformLanguage: Transformer = TransformLanguageMissing(logger, ai)
         return transformNoAltImage.transformAll(document) +
                 transformNoUrlDesc.transformAll(document) +
-                transformWithDiv.transformAll(document)
+                transformWithDiv.transformAll(document) +
+                transformLanguage.transformAll(document)
 
     }
 }

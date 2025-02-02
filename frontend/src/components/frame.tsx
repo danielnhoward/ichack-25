@@ -82,6 +82,10 @@ export default function Frame({url}: {url: string}) {
                 div.replaceWith(button);
                 break;
             }
+            case 'language': {
+                document.documentElement.lang = transform.lang;
+                break;
+            }
         }
         });
 

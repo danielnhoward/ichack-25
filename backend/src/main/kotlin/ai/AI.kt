@@ -7,4 +7,6 @@ interface AI {
         url: String,
         text: String,
     ): String
+
+    fun getLanguage(string: String): String
 }
