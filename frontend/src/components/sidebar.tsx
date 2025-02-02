@@ -9,7 +9,7 @@ import {
 
 export default function AppSidebar() {
     return (
-        <Sidebar>
+        <Sidebar aria-hidden>
             <SidebarContent>
                 <SidebarGroup>
                     <SidebarGroupLabel>Accessibility Issues</SidebarGroupLabel>
