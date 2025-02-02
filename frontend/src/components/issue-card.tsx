@@ -1,13 +1,31 @@
 import {Card, CardHeader, CardTitle, CardDescription} from './ui/card';
 
+import {
+    Accordion,
+    AccordionContent,
+    AccordionItem,
+    AccordionTrigger,
+  } from "./ui/accordion"
+  
+
 export default function IssueCard({transform, element}: {transform: Transform, element: HTMLElement}) {
     return (
         <Card className="my-2">
-            <CardHeader>
-                <CardTitle>{getTitle(transform.type)}</CardTitle>
-                <CardDescription>{getDescriptions(transform, element)}</CardDescription>
+            <CardHeader
+                className="cursor-pointer" style= {{padding: "0.1rem", paddingLeft: "0.1rem"}}
+            >
+                <Accordion type="single" collapsible className='border-0'>
+                <AccordionItem value="item-1" className='border-0'>
+                <AccordionTrigger>{getTitle(transform.type)}</AccordionTrigger>
+                <AccordionContent>
+                {getDescriptions(transform, element)}
+                </AccordionContent>
+                </AccordionItem>
+                </Accordion>
             </CardHeader>
         </Card>
+            
+        
     );
 }
 
@@ -49,6 +67,7 @@ function getDescriptions(transform: Transform, element: HTMLElement) {
         </>;
     }
     case 'button':
-        return <>All clickable <code>div</code> elements should instead use a <code>button</code></>;
+        return <>When a screen reader attempts to read a clickable <code>div</code>, it fails to announce to the user that the 
+        <code>div</code>. It should instead use a <code>button</code> for it's action to be clearer</>;
     }
 }
