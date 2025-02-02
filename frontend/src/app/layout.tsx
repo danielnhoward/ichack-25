@@ -15,8 +15,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-    title: 'Page Accesability Improver',
-    description: 'Page Accesability Improver',
+    title: 'Access Now',
 };
 
 export default function RootLayout({
