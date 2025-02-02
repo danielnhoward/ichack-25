@@ -3,12 +3,12 @@ interface ImageTransform {
 }
 
 interface LabelTransform {
-    for: string;
+    alt: string;
 }
 
 type Transform = {
     id: string;
-} & (({type: 'image'} & ImageTransform) | ({type: 'label'} & LabelTransform))
+} & (({type: 'image'} & ImageTransform) | ({type: 'link'} & LabelTransform))
 
 interface Input {
     html: string;
