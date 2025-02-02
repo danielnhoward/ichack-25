@@ -25,7 +25,7 @@ class TransformNoAltImage(
                 .select("img")
 
         return images
-            .filter { ((!it.hasAttr("alt")) || it.attr("alt") == "") && (!it.hasAttr("title"))}
+            .filter { ((!it.hasAttr("alt")) || it.attr("alt") == "") && (!it.hasAttr("title")) }
             .map { transform(it) }
     }
 

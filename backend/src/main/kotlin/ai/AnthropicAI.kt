@@ -28,7 +28,7 @@ private val getImageAltPrompt =
     """.trimIndent()
 
 class AnthropicAI : AI {
-    val anthropicRequestCache: ConcurrentMap<AnthropicRequest, AnthropicResponse> = ConcurrentHashMap()
+    private val anthropicRequestCache: ConcurrentMap<AnthropicRequest, AnthropicResponse> = ConcurrentHashMap()
 
     override fun getImageAltText(url: String): String {
         val content = runBlocking { AnthropicAPI.toImageContent(url) }
@@ -45,22 +45,11 @@ class AnthropicAI : AI {
                 ),
             )
 
-        val cachedRes: AnthropicResponse? = anthropicRequestCache[req]
-
-
         if (content.source.mediaType !in listOf("image/jpeg", "image/png", "image/gif", "image/webp")) {
             return ""
         }
 
-        val res: AnthropicResponse =
-            if (cachedRes != null) {
-                cachedRes
-            } else {
-                val computedRes: AnthropicResponse = runBlocking { AnthropicAPI.makeRequest(req) }
-                anthropicRequestCache[req] = computedRes
-                computedRes
-            }
-
+        val res: AnthropicResponse = cachedReq(req)
 
         res.content.first { it is TextContent }.let {
             return (it as TextContent).text
@@ -72,5 +61,17 @@ class AnthropicAI : AI {
         text: String,
     ): String {
         TODO("Not yet implemented")
+    }
+
+    private fun cachedReq(req: AnthropicRequest): AnthropicResponse {
+        val cachedRes: AnthropicResponse? = anthropicRequestCache[req]
+
+        return if (cachedRes != null) {
+            cachedRes
+        } else {
+            val computedRes: AnthropicResponse = runBlocking { AnthropicAPI.makeRequest(req) }
+            anthropicRequestCache[req] = computedRes
+            computedRes
+        }
     }
 }
