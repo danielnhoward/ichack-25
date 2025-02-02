@@ -25,13 +25,12 @@ class TransformNoAltImage(
                 .select("img")
 
         return images
-            .filter { !it.hasAttr("alt") }
+            .filter { ((!it.hasAttr("alt")) || it.attr("alt") == "") && (!it.hasAttr("title"))}
             .map { transform(it) }
     }
 
     override fun transform(element: Element): Transformation {
-        require(element.tagName() == "img") { "Must enter a img tag" }
-        require(!element.hasAttr("alt")) { "Must not have an alt" }
+        require(((!element.hasAttr("alt")) || element.attr("alt") == "") && (!element.hasAttr("title"))) { "invalid" }
 
         val imageLink: String = element.attr("src")
 

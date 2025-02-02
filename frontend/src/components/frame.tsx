@@ -57,6 +57,7 @@ export default function Frame({url}: {url: string}) {
         });
 
         transforms.forEach((transform) => {
+            console.log(transform);
             const id = parseInt(transform.id);
             switch (transform.type) {
             case 'image': {

@@ -31,13 +31,14 @@ class AnthropicAI : AI {
     val anthropicRequestCache: ConcurrentMap<AnthropicRequest, AnthropicResponse> = ConcurrentHashMap()
 
     override fun getImageAltText(url: String): String {
+        val content = runBlocking { AnthropicAPI.toImageContent(url) }
         val req =
             AnthropicRequest(
                 listOf(
                     Message(
                         content =
                             listOf(
-                                runBlocking { AnthropicAPI.toImageContent(url) },
+                                content,
                                 TextContent(getImageAltPrompt),
                             ),
                     ),
@@ -45,6 +46,11 @@ class AnthropicAI : AI {
             )
 
         val cachedRes: AnthropicResponse? = anthropicRequestCache[req]
+
+
+        if (content.source.mediaType !in listOf("image/jpeg", "image/png", "image/gif", "image/webp")) {
+            return ""
+        }
 
         val res: AnthropicResponse =
             if (cachedRes != null) {
@@ -54,6 +60,7 @@ class AnthropicAI : AI {
                 anthropicRequestCache[req] = computedRes
                 computedRes
             }
+
 
         res.content.first { it is TextContent }.let {
             return (it as TextContent).text
