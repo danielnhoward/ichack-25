@@ -29,7 +29,7 @@ export default function HomePage() {
         <PageHeader className="grow">
             <PageHeaderHeading>Access Now</PageHeaderHeading>
             <PageHeaderDescription>
-                Insert Description
+                Our tool takes an inaccessible website and transforms it by automatically generating meaningful alt text for images and adding labels to form elements. This makes the website more user-friendly and accessible, especially for individuals who rely on screen readers.
             </PageHeaderDescription>
             <PageActions className="flex flex-col gap-4">
                 <div className="w-full">
