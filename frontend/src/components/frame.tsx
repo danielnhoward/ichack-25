@@ -70,7 +70,17 @@ export default function Frame({url}: {url: string}) {
                 const label = elements[id] as HTMLLabelElement;
                 label.ariaLabel = transform.alt;
             }
+            case 'button': {
+                const button = document.createElement("button");
+                const div = elements[id] as HTMLDivElement;
+                button.innerHTML = div.innerText;
+
+                for (let attr of div.attributes) {
+                    button.setAttribute(attr.name, attr.value);
+                }
+                div.replaceWith(button);
             }
+        }
         });
 
         setLoaded(true);
