@@ -18,7 +18,7 @@ class Transform(
     fun transform(input: String): List<Transformation> {
         val document: Document = Jsoup.parse(input)
         val transformNoAltImage: Transformer = TransformNoAltImage(logger, ai)
-
-        return transformNoAltImage.transformAll(document)
+        val transformNoUrlDesc: Transformer = TransformLinkNoDescription(logger, ai)
+        return transformNoAltImage.transformAll(document) + transformNoUrlDesc.transformAll(document)
     }
 }

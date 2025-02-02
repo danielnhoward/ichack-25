@@ -66,9 +66,9 @@ export default function Frame({url}: {url: string}) {
                 image.title = transform.alt;
                 break;
             }
-            case 'label': {
+            case 'link': {
                 const label = elements[id] as HTMLLabelElement;
-                label.htmlFor = transform.type;
+                label.ariaLabel = transform.alt;
             }
             }
         });

@@ -35,7 +35,7 @@ class TransformNoAltImage(
         val imageLink: String = element.attr("src")
 
         logger.log(Level.INFO, "Image link: $imageLink")
-        println("test1")
+
         val imageAltText: String = ai.getImageAltText(imageLink)
 
         val imageId: String = element.attr("data-ichack-id")
