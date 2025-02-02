@@ -13,9 +13,10 @@ sealed class Transformation
 class Transform(
     private val logger: Logger,
 ) {
+    private val ai: AI = AnthropicAI()
+
     fun transform(input: String): List<Transformation> {
         val document: Document = Jsoup.parse(input)
-        val ai: AI = AnthropicAI()
         val transformNoAltImage: Transformer = TransformNoAltImage(logger, ai)
         val transformNoUrlDesc: Transformer = TransformLinkNoDescription(logger, ai)
         val transformWithDiv: Transformer = TransformDivWithClick(logger, ai)
