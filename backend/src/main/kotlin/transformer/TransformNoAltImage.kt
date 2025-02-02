@@ -10,7 +10,10 @@ import java.util.logging.Logger
 
 @Serializable
 @SerialName("image")
-data class ImageAlt(val id: String, val alt: String) : Transformation()
+data class ImageAlt(
+    val id: String,
+    val alt: String,
+) : Transformation()
 
 class TransformNoAltImage(
     private val logger: Logger,

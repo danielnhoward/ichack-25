@@ -1,21 +1,13 @@
 package com.example.transformer
 
-import com.example.ai.AI
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
-import org.jsoup.nodes.Document
-import org.jsoup.nodes.Element
-import java.util.logging.Level
-import java.util.logging.Logger
-
-//@Serializable
-//@SerialName("link")
-//data class HrefDescriptor(val id: String, val alt: String) : Transformation()
+// @Serializable
+// @SerialName("link")
+// data class HrefDescriptor(val id: String, val alt: String) : Transformation()
 //
-//class TransformLinkNoDescription(
+// class TransformLinkNoDescription(
 //    private val logger: Logger,
 //    private val ai: AI,
-//) : Transformer {
+// ) : Transformer {
 //    override suspend fun transformAll(document: Document): List<Transformation> {
 //        val images: List<Element> =
 //            document
@@ -43,4 +35,4 @@ import java.util.logging.Logger
 //
 //        return HrefDescriptor(imageId, imageAltText)
 //    }
-//}
+// }

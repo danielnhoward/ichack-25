@@ -2,7 +2,8 @@ package com.example.ai
 
 import kotlinx.coroutines.runBlocking
 
-private val getImageAltPrompt = """
+private val getImageAltPrompt =
+    """
     You will be writing alt text for an image based on a provided description. The image description is as follows:
 
     Your task is to create concise, informative alt text that accurately describes the essential elements of the image for users who cannot see it. This alt text will be used by screen readers and other assistive technologies to convey the image's content and purpose.
@@ -22,21 +23,32 @@ private val getImageAltPrompt = """
     5. Review and refine your alt text for clarity and brevity.
 
     Only return your final alt text
-""".trimIndent()
+    """.trimIndent()
 
 class AnthropicAI : AI {
     override fun getImageAltText(url: String): String {
-        val req = AnthropicRequest(listOf(Message(content=listOf(
-            runBlocking { AnthropicAPI.toImageContent(url) },
-            TextContent(getImageAltPrompt)
-        ))))
+        val req =
+            AnthropicRequest(
+                listOf(
+                    Message(
+                        content =
+                            listOf(
+                                runBlocking { AnthropicAPI.toImageContent(url) },
+                                TextContent(getImageAltPrompt),
+                            ),
+                    ),
+                ),
+            )
         val res = runBlocking { AnthropicAPI.makeRequest(req) }
         res.content.first { it is TextContent }.let {
             return (it as TextContent).text
         }
     }
 
-    override fun getUrlDescription(url: String, text: String): String {
+    override fun getUrlDescription(
+        url: String,
+        text: String,
+    ): String {
         TODO("Not yet implemented")
     }
 }
