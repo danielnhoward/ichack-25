@@ -1,9 +1,11 @@
 'use client';
 
+import {SidebarProvider, SidebarTrigger} from './ui/sidebar';
 import {getTransforms} from '@/server/backend';
 
 import {Loader2} from 'lucide-react';
 import {useRef, useState} from 'react';
+import Sidebar from './sidebar';
 
 export default function Frame({url}: {url: string}) {
     const [loaded, setLoaded] = useState(false);
@@ -89,17 +91,21 @@ export default function Frame({url}: {url: string}) {
     }
 
     return (
-        <>
-            <iframe
-                title="iframe title"
-                className={`w-full h-full ${loaded ? '' : 'hidden'}`}
-                src={`/proxy?url=${url}`}
-                ref={frameRef}
-                onLoad={onFrameLoad}
-            />
-            <div className={`flex justify-center items-center min-h-[100vh] ${loaded ? 'hidden' : ''}`}>
-                <Loader2 className="animate-spin"/>
-            </div>
-        </>
+        <SidebarProvider>
+            <Sidebar/>
+            <main className="w-full">
+                <SidebarTrigger className={loaded ? '' : 'hidden'}/>
+                <iframe
+                    title="Site Iframe"
+                    className={`w-full h-full ${loaded ? '' : 'hidden'}`}
+                    src={`/proxy?url=${url}`}
+                    ref={frameRef}
+                    onLoad={onFrameLoad}
+                />
+                <div className={`flex justify-center items-center min-h-[100vh] ${loaded ? 'hidden' : ''}`}>
+                    <Loader2 className="animate-spin"/>
+                </div>
+            </main>
+        </SidebarProvider>
     );
 }
