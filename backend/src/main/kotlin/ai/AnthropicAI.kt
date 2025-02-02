@@ -1,6 +1,8 @@
 package com.example.ai
 
 import kotlinx.coroutines.runBlocking
+import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.ConcurrentMap
 
 private val getImageAltPrompt =
     """
@@ -26,6 +28,8 @@ private val getImageAltPrompt =
     """.trimIndent()
 
 class AnthropicAI : AI {
+    val anthropicRequestCache: ConcurrentMap<AnthropicRequest, AnthropicResponse> = ConcurrentHashMap()
+
     override fun getImageAltText(url: String): String {
         val req =
             AnthropicRequest(
@@ -39,7 +43,18 @@ class AnthropicAI : AI {
                     ),
                 ),
             )
-        val res = runBlocking { AnthropicAPI.makeRequest(req) }
+
+        val cachedRes: AnthropicResponse? = anthropicRequestCache[req]
+
+        val res: AnthropicResponse =
+            if (cachedRes != null) {
+                cachedRes
+            } else {
+                val computedRes: AnthropicResponse = runBlocking { AnthropicAPI.makeRequest(req) }
+                anthropicRequestCache[req] = computedRes
+                computedRes
+            }
+
         res.content.first { it is TextContent }.let {
             return (it as TextContent).text
         }
